@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskMaster - Local Labor Hiring Platform</title>
+    <link rel="stylesheet" href="styless.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="logo">
+            <h1>TaskMaster</h1>
+        </div>
+        <div class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#categories">Categories</a>
+            <a href="#how-it-works">How It Works</a>
+            <button class="login-btn" onclick="showLoginModal()">Login</button>
+            <button class="signup-btn" onclick="showSignupModal()">Sign Up</button>
+        </div>
+        <div class="mobile-menu">
+            <i class="fas fa-bars"></i>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>Find Local Workers for Your Tasks</h1>
+            <p>Connect with verified professionals for all your household needs</p>
+            <div class="search-container">
+                <div class="search-box">
+                    <select id="category-select">
+                        <option value="">Select Category</option>
+                        <option value="painter">Painter</option>
+                        <option value="cook">Cook</option>
+                        <option value="driver">Driver</option>
+                        <option value="plumber">Plumber</option>
+                        <option value="electrician">Electrician</option>
+                    </select>
+                    <input type="text" id="location-input" placeholder="Enter your location">
+                    <button onclick="searchWorkers()">
+                        <i class="fas fa-search"></i> Find Workers
+                    </button>
+                </div>
+                <button class="location-btn" onclick="getCurrentLocation()">
+                    <i class="fas fa-map-marker-alt"></i> Use Current Location
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="categories" id="categories">
+        <h2>Service Categories</h2>
+        <div class="category-grid">
+            <div class="category-card" onclick="showWorkers('painter')">
+                <i class="fas fa-paint-roller"></i>
+                <h3>Painters</h3>
+                <p>Professional house painters</p>
+            </div>
+            <div class="category-card" onclick="showWorkers('cook')">
+                <i class="fas fa-utensils"></i>
+                <h3>Cooks</h3>
+                <p>Experienced home cooks</p>
+            </div>
+            <div class="category-card" onclick="showWorkers('driver')">
+                <i class="fas fa-car"></i>
+                <h3>Drivers</h3>
+                <p>Professional drivers</p>
+            </div>
+            <div class="category-card" onclick="showWorkers('plumber')">
+                <i class="fas fa-wrench"></i>
+                <h3>Plumbers</h3>
+                <p>Expert plumbing services</p>
+            </div>
+            <div class="category-card" onclick="showWorkers('electrician')">
+                <i class="fas fa-bolt"></i>
+                <h3>Electricians</h3>
+                <p>Certified electricians</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Workers List Section -->
+    <section class="workers-list" id="workers-list">
+        <h2>Available Workers</h2>
+        <div class="workers-grid" id="workers-grid">
+            <!-- Workers will be dynamically added here -->
+        </div>
+    </section>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Login</h2>
+            <form id="loginForm">
+                <input type="email" placeholder="Email" required>
+                <input type="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+                <p>Don't have an account? <a href="#" onclick="showSignupModal()">Sign Up</a></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div class="modal" id="signupModal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Sign Up</h2>
+            <form id="signupForm">
+                <select required>
+                    <option value="">Select Account Type</option>
+                    <option value="user">User</option>
+                    <option value="worker">Worker</option>
+                </select>
+                <input type="text" placeholder="Full Name" required>
+                <input type="email" placeholder="Email" required>
+                <input type="tel" placeholder="Phone Number" required>
+                <input type="password" placeholder="Password" required>
+                <div id="worker-fields" style="display: none;">
+                    <select required>
+                        <option value="">Select Category</option>
+                        <option value="painter">Painter</option>
+                        <option value="cook">Cook</option>
+                        <option value="driver">Driver</option>
+                        <option value="plumber">Plumber</option>
+                        <option value="electrician">Electrician</option>
+                    </select>
+                    <input type="text" placeholder="Experience (in years)">
+                    <textarea placeholder="Skills & Expertise"></textarea>
+                </div>
+                <button type="submit">Sign Up</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Worker Profile Modal -->
+    <div class="modal" id="workerProfileModal">
+        <div class="modal-content worker-profile">
+            <span class="close">&times;</span>
+            <div class="profile-header">
+                <img src="" alt="Worker Photo" id="worker-photo">
+                <div class="profile-info">
+                    <h2 id="worker-name"></h2>
+                    <p id="worker-category"></p>
+                    <div class="rating">
+                        <span class="stars"></span>
+                        <span class="review-count"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="profile-details">
+                <div class="experience-section">
+                    <h3>Experience</h3>
+                    <p id="worker-experience"></p>
+                </div>
+                <div class="skills-section">
+                    <h3>Skills</h3>
+                    <p id="worker-skills"></p>
+                </div>
+                <div class="pricing-section">
+                    <h3>Pricing</h3>
+                    <p>Hourly Rate: <span id="hourly-rate"></span></p>
+                    <p>Daily Rate: <span id="daily-rate"></span></p>
+                </div>
+            </div>
+            <div class="booking-section">
+                <h3>Book Now</h3>
+                <form id="bookingForm">
+                    <input type="date" required>
+                    <select required>
+                        <option value="hourly">Hourly Basis</option>
+                        <option value="daily">Daily Basis</option>
+                    </select>
+                    <input type="number" placeholder="Number of hours/days" required>
+                    <button type="submit">Book & Pay</button>
+                </form>
+            </div>
+            <div class="contact-section">
+                <button class="chat-btn" onclick="startChat()">
+                    <i class="fas fa-comment"></i> Chat
+                </button>
+                <button class="call-btn" onclick="startCall()">
+                    <i class="fas fa-phone"></i> Call
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Interface -->
+    <div class="chat-interface" id="chatInterface">
+        <div class="chat-header">
+            <h3>Chat with <span id="chat-worker-name"></span></h3>
+            <button onclick="closeChat()">×</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <!-- Messages will be dynamically added here -->
+        </div>
+        <div class="chat-input">
+            <input type="text" placeholder="Type your message...">
+            <button onclick="sendMessage()">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About TaskMaster</h3>
+                <p>Your trusted platform for finding and hiring local workers for all your household needs.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <a href="#home">Home</a>
+                <a href="#categories">Categories</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#contact">Contact</a>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p>Email: support@taskmaster.com</p>
+                <p>Phone: +1 (555) 123-4567</p>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 TaskMaster. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
